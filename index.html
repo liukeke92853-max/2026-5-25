@@ -1,0 +1,2488 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>团长系统 - 一键提报</title>
+  <style>
+    :root {
+      color: #182026;
+      background: #ffffff;
+      font-family: Inter, "PingFang SC", "Microsoft YaHei", sans-serif;
+      font-size: 14px;
+      letter-spacing: 0;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    [hidden] {
+      display: none !important;
+    }
+
+    body {
+      margin: 0;
+    }
+
+    button,
+    input,
+    select {
+      font: inherit;
+    }
+
+    button {
+      align-items: center;
+      background: #ffffff;
+      border: 1px solid #d6dee5;
+      border-radius: 6px;
+      color: #182026;
+      cursor: pointer;
+      display: inline-flex;
+      gap: 8px;
+      justify-content: center;
+      min-height: 36px;
+      padding: 0 12px;
+    }
+
+    button:disabled {
+      cursor: not-allowed;
+      opacity: 0.45;
+    }
+
+    button.primary {
+      background: #2563eb;
+      border-color: #2563eb;
+      color: #ffffff;
+    }
+
+    input,
+    select {
+      background: #ffffff;
+      border: 1px solid #d6dee5;
+      border-radius: 6px;
+      min-height: 36px;
+      min-width: 160px;
+      padding: 0 10px;
+    }
+
+    input[type="checkbox"],
+    input[type="radio"] {
+      accent-color: #2563eb;
+      cursor: pointer;
+      height: 16px;
+      margin: 0;
+      min-height: 0;
+      min-width: 0;
+      padding: 0;
+      width: 16px;
+    }
+
+    .app-shell {
+      display: grid;
+      grid-template-columns: 176px 1fr;
+      min-height: 100vh;
+    }
+
+    .sidebar {
+      background: #eaf2ff;
+      border-right: 1px solid #d5e1f0;
+      color: #1f2937;
+      max-height: 100vh;
+      overflow: auto;
+      padding: 18px 14px;
+    }
+
+    .brand {
+      align-items: center;
+      display: flex;
+      gap: 10px;
+      margin-bottom: 18px;
+      padding: 0 2px;
+    }
+
+    .brand-mark {
+      align-items: center;
+      background: #2563eb;
+      border-radius: 8px;
+      color: #ffffff;
+      display: inline-flex;
+      font-weight: 800;
+      height: 34px;
+      justify-content: center;
+      width: 34px;
+    }
+
+    .brand strong {
+      font-size: 15px;
+    }
+
+    .nav {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .nav-group {
+      display: grid;
+      gap: 6px;
+    }
+
+    .nav-group-title {
+      align-items: center;
+      color: #1f2937;
+      display: grid;
+      gap: 8px;
+      grid-template-columns: 18px 1fr 16px;
+      min-height: 32px;
+      padding: 0 2px;
+    }
+
+    .nav-group-title.active {
+      color: #2563eb;
+      font-weight: 700;
+    }
+
+    .nav-subitems {
+      display: grid;
+      gap: 4px;
+    }
+
+    .nav button {
+      background: transparent;
+      border-color: transparent;
+      border-radius: 8px;
+      color: #344054;
+      justify-content: flex-start;
+      min-height: 38px;
+      padding-left: 42px;
+      width: 100%;
+    }
+
+    .nav button.active,
+    .nav button:hover {
+      background: #ffffff;
+      color: #2563eb;
+      font-weight: 700;
+    }
+
+    .content {
+      background: #ffffff;
+      padding: 24px 18px;
+    }
+
+    .page {
+      display: none;
+    }
+
+    .page.active {
+      display: grid;
+      gap: 14px;
+    }
+
+    .auto-filter,
+    .auto-list-card {
+      background: #ffffff;
+      border-radius: 8px;
+    }
+
+    .auto-filter {
+      display: grid;
+      gap: 12px;
+      padding: 16px 18px;
+    }
+
+    .auto-filter-row {
+      align-items: center;
+      display: flex;
+      gap: 12px;
+    }
+
+    .auto-filter-row select {
+      min-width: 320px;
+    }
+
+    .section-title {
+      align-items: center;
+      display: flex;
+      gap: 12px;
+      justify-content: space-between;
+      padding: 16px 18px;
+    }
+
+    .auto-config-list {
+      display: grid;
+      gap: 12px;
+      padding: 0 18px 18px;
+    }
+
+    .auto-config-card {
+      background: #f8fafc;
+      border: 1px solid #edf1f5;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .auto-account-row {
+      align-items: center;
+      display: flex;
+      gap: 12px;
+      padding: 16px 18px;
+    }
+
+    .auto-account-row span {
+      color: #71808f;
+      margin-left: auto;
+    }
+
+    .account-badge {
+      align-items: center;
+      background: #e8f1ff;
+      border: 1px solid #94b9ff;
+      border-radius: 999px;
+      color: #2563eb;
+      display: inline-flex;
+      font-weight: 800;
+      height: 38px;
+      justify-content: center;
+      width: 38px;
+    }
+
+    .auto-config-grid {
+      display: grid;
+      grid-template-columns: 1fr 2.2fr 150px;
+    }
+
+    .auto-col-title {
+      background: #dcecff;
+      font-weight: 700;
+      padding: 12px 18px;
+    }
+
+    .auto-business,
+    .auto-setting,
+    .auto-switch-cell {
+      align-items: center;
+      display: grid;
+      min-height: 78px;
+      padding: 16px 18px;
+    }
+
+    .auto-setting {
+      color: #556575;
+    }
+
+    .auto-setting p {
+      margin: 4px 0;
+    }
+
+    .auto-switch-cell {
+      justify-items: end;
+    }
+
+    .link-button,
+    .ratio-edit-button {
+      border-color: transparent;
+      color: #2563eb;
+      min-height: 24px;
+      padding: 0 4px;
+    }
+
+    .toggle input {
+      display: none;
+    }
+
+    .toggle span {
+      background: #c8d0da;
+      border-radius: 999px;
+      display: block;
+      height: 24px;
+      position: relative;
+      transition: background 0.2s ease;
+      width: 46px;
+    }
+
+    .toggle span::after {
+      background: #ffffff;
+      border-radius: 999px;
+      content: "";
+      height: 18px;
+      left: 3px;
+      position: absolute;
+      top: 3px;
+      transition: transform 0.2s ease;
+      width: 18px;
+    }
+
+    .toggle input:checked + span {
+      background: #2563eb;
+    }
+
+    .toggle input:checked + span::after {
+      transform: translateX(22px);
+    }
+
+    .drawer-mask {
+      background: rgba(15, 23, 42, 0.52);
+      bottom: 0;
+      display: none;
+      justify-content: flex-end;
+      left: 0;
+      position: fixed;
+      right: 0;
+      top: 0;
+      z-index: 20;
+    }
+
+    .drawer-mask.open,
+    .modal-mask.open {
+      display: flex;
+    }
+
+    .modal-mask {
+      align-items: center;
+      background: rgba(15, 23, 42, 0.48);
+      bottom: 0;
+      display: none;
+      justify-content: center;
+      left: 0;
+      padding: 24px;
+      position: fixed;
+      right: 0;
+      top: 0;
+      z-index: 30;
+    }
+
+    .submit-drawer {
+      background: #ffffff;
+      display: grid;
+      grid-template-rows: auto 1fr;
+      max-width: 860px;
+      min-width: min(860px, 100vw);
+      overflow: auto;
+    }
+
+    .wide-drawer {
+      max-width: 1040px;
+      min-width: min(1040px, 100vw);
+    }
+
+    .submit-drawer > header {
+      align-items: center;
+      border-bottom: 1px solid #edf1f5;
+      display: flex;
+      justify-content: space-between;
+      padding: 18px;
+    }
+
+    .submit-drawer h2,
+    .auto-settings-modal h2,
+    .confirm-modal h2 {
+      font-size: 18px;
+      margin: 0;
+    }
+
+    .drawer-block {
+      display: grid;
+      background: #f7f9fc;
+      gap: 16px;
+      padding: 18px;
+    }
+
+    .drawer-section-card {
+      background: #ffffff;
+      border: 1px solid #edf1f5;
+      border-radius: 8px;
+      display: grid;
+      gap: 14px;
+      padding: 16px;
+    }
+
+    .drawer-toolbar {
+      align-items: center;
+      border-bottom: 1px solid #edf1f5;
+      display: flex;
+      gap: 14px;
+      justify-content: space-between;
+      padding: 0 0 14px;
+    }
+
+    .drawer-toolbar strong,
+    .drawer-toolbar span {
+      display: block;
+    }
+
+    .drawer-toolbar span,
+    .drawer-header-desc {
+      color: #71808f;
+      margin-top: 4px;
+    }
+
+    .subtle-primary {
+      background: #ffffff;
+      border-color: #2563eb;
+      color: #2563eb;
+      min-height: 30px;
+      min-width: 112px;
+    }
+
+    .exclude-type-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .exclude-type-group button {
+      color: #4b5563;
+      font-size: 13px;
+      min-height: 34px;
+      padding: 0 14px;
+    }
+
+    .exclude-type-group button.active {
+      background: #eaf1ff;
+      border-color: #2563eb;
+      color: #2563eb;
+      font-weight: 700;
+    }
+
+    .exclude-form-grid {
+      display: grid;
+      gap: 12px;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .exclude-form-grid label {
+      display: grid;
+      gap: 8px;
+    }
+
+    .exclude-form-grid input {
+      min-width: 0;
+      width: 100%;
+    }
+
+    .exclude-list-filter {
+      align-items: center;
+      background: #f8fafc;
+      border: 1px solid #edf1f5;
+      border-radius: 8px;
+      display: grid;
+      gap: 12px;
+      grid-template-columns: minmax(180px, 1fr) minmax(180px, 1fr) 96px;
+      padding: 12px 14px;
+    }
+
+    .exclude-list-filter label {
+      align-items: center;
+      color: #4b5563;
+      display: grid;
+      gap: 8px;
+      grid-template-columns: auto minmax(0, 1fr);
+      font-weight: 600;
+    }
+
+    .exclude-list-filter input {
+      min-width: 0;
+      width: 100%;
+    }
+
+    .required::before {
+      color: #ef4444;
+      content: "* ";
+    }
+
+    .exclude-rule-preview {
+      align-items: center;
+      color: #6b7d90;
+      display: flex;
+      gap: 8px;
+      line-height: 1.5;
+      min-height: 22px;
+    }
+
+    .rule-tip-icon {
+      align-items: center;
+      border: 2px solid currentColor;
+      border-radius: 999px;
+      display: inline-flex;
+      flex: 0 0 auto;
+      font-size: 13px;
+      font-weight: 800;
+      height: 18px;
+      justify-content: center;
+      line-height: 1;
+      width: 18px;
+    }
+
+    .drawer-inline-actions {
+      border-top: 1px solid #edf1f5;
+      display: flex;
+      justify-content: flex-end;
+      padding-top: 14px;
+    }
+
+    .exclude-section-title {
+      align-items: center;
+      color: #111827;
+      display: flex;
+      font-size: 16px;
+      font-weight: 700;
+      gap: 10px;
+      line-height: 24px;
+      margin: 18px 0 0;
+    }
+
+    .exclude-section-title::before {
+      background: #2563eb;
+      border-radius: 999px;
+      content: "";
+      display: inline-block;
+      height: 24px;
+      width: 4px;
+    }
+
+    .exclude-list-head {
+      align-items: center;
+      display: flex;
+      gap: 14px;
+      justify-content: space-between;
+      margin: 0;
+    }
+
+    .exclude-list-head .exclude-section-title {
+      margin-top: 0;
+    }
+
+    .manual-actions {
+      align-items: center;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: flex-end;
+    }
+
+    .manual-actions span {
+      color: #64748b;
+    }
+
+    .manual-actions .primary:disabled {
+      background: #a8c4f8;
+      border-color: #a8c4f8;
+      color: #ffffff;
+      opacity: 1;
+    }
+
+    .manual-record-link {
+      background: transparent;
+      border: 0;
+      color: #2563eb;
+      min-height: 28px;
+      padding: 0;
+    }
+
+    .manual-record-link:hover {
+      background: transparent;
+      color: #1d4ed8;
+    }
+
+    .goods-list-head {
+      align-items: center;
+      display: flex;
+      gap: 14px;
+      justify-content: space-between;
+      margin-top: 2px;
+    }
+
+    table {
+      border-collapse: collapse;
+      width: 100%;
+    }
+
+    th,
+    td {
+      border-bottom: 1px solid #edf1f5;
+      padding: 13px 14px;
+      text-align: left;
+      vertical-align: middle;
+    }
+
+    th {
+      background: #f5f7fb;
+      color: #4b5563;
+      font-weight: 700;
+    }
+
+    .exclude-table-wrap {
+      overflow: auto;
+    }
+
+    .exclude-table-wrap table th,
+    .exclude-table-wrap table td {
+      font-size: 14px;
+      height: 74px;
+      text-align: center;
+    }
+
+    .exclude-pager {
+      align-items: center;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: flex-end;
+      padding: 8px 0 0;
+    }
+
+    .exclude-pager span {
+      color: #4b5563;
+    }
+
+    .exclude-pager button {
+      min-height: 32px;
+      min-width: 32px;
+      padding: 0 10px;
+    }
+
+    .exclude-pager button.active {
+      background: #2563eb;
+      border-color: #2563eb;
+      color: #ffffff;
+    }
+
+    .text-delete-button {
+      border: 0;
+      color: #ef4444;
+      font-size: 14px;
+      min-height: 32px;
+      padding: 0;
+    }
+
+    .manual-modal {
+      max-width: 1120px;
+      width: min(1120px, calc(100vw - 48px));
+    }
+
+    .manual-modal .modal-header {
+      background: #ffffff;
+      border-bottom: 1px solid #edf1f5;
+    }
+
+    .manual-modal .modal-body {
+      gap: 32px;
+      padding: 28px 32px 34px;
+    }
+
+    .manual-summary {
+      background: #f8fbff;
+      border: 1px solid #edf3fb;
+      border-radius: 8px;
+      color: #556575;
+      line-height: 1.7;
+      padding: 12px 14px;
+    }
+
+    .manual-custom-ratio {
+      align-items: center;
+      color: #4b5563;
+      display: flex;
+      flex-wrap: wrap;
+      font-size: 17px;
+      gap: 14px;
+    }
+
+    .manual-custom-ratio input {
+      font-size: 17px;
+      height: 48px;
+      min-width: 0;
+      width: 128px;
+    }
+
+    .manual-record-status {
+      background: #e7f8f5;
+      border-radius: 999px;
+      color: #0f766e;
+      display: inline-flex;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 4px 10px;
+    }
+
+    .th-help {
+      align-items: center;
+      display: inline-flex;
+      gap: 6px;
+      justify-content: center;
+      position: relative;
+    }
+
+    .th-help-icon {
+      align-items: center;
+      border: 1px solid #8b98aa;
+      border-radius: 999px;
+      color: #8b98aa;
+      display: inline-flex;
+      font-size: 12px;
+      font-weight: 700;
+      height: 18px;
+      justify-content: center;
+      line-height: 1;
+      width: 18px;
+    }
+
+    .th-help-tip {
+      background: #4b536f;
+      border-radius: 10px;
+      bottom: calc(100% + 12px);
+      color: #ffffff;
+      display: none;
+      font-size: 15px;
+      font-weight: 400;
+      left: 50%;
+      line-height: 1.6;
+      min-width: 360px;
+      padding: 14px 18px;
+      position: absolute;
+      text-align: left;
+      transform: translateX(-50%);
+      z-index: 50;
+    }
+
+    .th-help:hover .th-help-tip,
+    .th-help:focus-within .th-help-tip {
+      display: block;
+    }
+
+    .goods-list-title {
+      color: #111827;
+      font-size: 16px;
+      font-weight: 700;
+      margin: 0;
+    }
+
+    .empty-state {
+      align-items: center;
+      color: #8a98a8;
+      display: grid;
+      gap: 10px;
+      justify-items: center;
+      min-height: 220px;
+      padding: 30px;
+    }
+
+    .toast {
+      align-items: center;
+      background: #ffffff;
+      border-radius: 6px;
+      box-shadow: 0 16px 48px rgba(15, 23, 42, 0.24);
+      color: #1f2937;
+      display: none;
+      gap: 18px;
+      left: 50%;
+      min-width: 360px;
+      padding: 22px 34px;
+      position: fixed;
+      top: 24px;
+      transform: translateX(-50%);
+      z-index: 80;
+    }
+
+    .toast.show {
+      display: flex;
+    }
+
+    .toast-message {
+      font-size: 14px;
+      font-weight: 400;
+    }
+
+    .auto-settings-modal,
+    .confirm-modal {
+      background: #ffffff;
+      border-radius: 8px;
+      box-shadow: 0 20px 70px rgba(15, 23, 42, 0.28);
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      max-height: min(720px, calc(100vh - 48px));
+      max-width: 530px;
+      overflow: hidden;
+      width: min(530px, 100%);
+    }
+
+    .auto-settings-modal.manual-modal {
+      max-width: 1120px;
+      width: min(1120px, calc(100vw - 48px));
+    }
+
+    .import-modal {
+      border-radius: 14px;
+      max-width: 960px;
+      width: min(960px, calc(100vw - 48px));
+    }
+
+    .modal-header {
+      align-items: center;
+      background: #f5f8ff;
+      display: flex;
+      justify-content: space-between;
+      padding: 18px 20px;
+    }
+
+    .import-modal .modal-header {
+      background: #f5f8ff;
+      padding: 34px 48px;
+    }
+
+    .import-modal .modal-header h2 {
+      color: #182026;
+      font-size: 30px;
+      font-weight: 800;
+    }
+
+    .icon-button {
+      border: 0;
+      color: #a3adba;
+      min-height: 28px;
+      padding: 0;
+      width: 28px;
+    }
+
+    .import-modal .icon-button {
+      color: #c9ced8;
+      font-size: 42px;
+      font-weight: 300;
+      line-height: 1;
+      min-height: 44px;
+      width: 44px;
+    }
+
+    .modal-body {
+      display: grid;
+      gap: 18px;
+      overflow: auto;
+      padding: 18px 26px 22px;
+    }
+
+    .import-modal .modal-body {
+      gap: 26px;
+      padding: 34px 48px 28px;
+    }
+
+    .modal-tip {
+      background: #fff7e6;
+      border-radius: 4px;
+      color: #4b5563;
+      line-height: 1.7;
+      padding: 12px 14px;
+    }
+
+    .import-modal .modal-tip {
+      background: transparent;
+      color: #566174;
+      font-size: 28px;
+      line-height: 1.65;
+      padding: 0;
+    }
+
+    .template-link {
+      background: transparent;
+      border: 0;
+      color: #2563eb;
+      display: inline;
+      font-size: inherit;
+      line-height: inherit;
+      min-height: 0;
+      padding: 0;
+      vertical-align: baseline;
+    }
+
+    .upload-dropzone {
+      align-items: center;
+      background: #fbfcff;
+      border: 2px dashed #c9d0dc;
+      border-radius: 8px;
+      color: #1f2937;
+      cursor: pointer;
+      display: grid;
+      gap: 18px;
+      justify-items: center;
+      min-height: 254px;
+      padding: 34px;
+      text-align: center;
+    }
+
+    .upload-dropzone:hover {
+      background: #f8fbff;
+      border-color: #9bbdff;
+    }
+
+    .upload-dropzone input {
+      display: none;
+    }
+
+    .upload-icon {
+      color: #8b98aa;
+      font-size: 46px;
+      line-height: 1;
+    }
+
+    .upload-title {
+      display: block;
+      font-size: 28px;
+      line-height: 1;
+    }
+
+    .upload-subtitle {
+      color: #8b98aa;
+      display: block;
+      font-size: 24px;
+      margin-top: 20px;
+    }
+
+    .form-block {
+      display: grid;
+      gap: 10px;
+    }
+
+    .radio-row {
+      align-items: center;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .radio-row label {
+      align-items: center;
+      display: inline-flex;
+      gap: 6px;
+    }
+
+    .modal-ratio-row {
+      background: #f4f7fb;
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+    }
+
+    .modal-ratio-row button {
+      border: 0;
+      border-radius: 0;
+      color: #4b5563;
+      min-height: 36px;
+      padding: 0;
+      position: relative;
+    }
+
+    .modal-ratio-row button.active {
+      background: #ffffff;
+      color: #2563eb;
+    }
+
+    .modal-ratio-row span {
+      background: #ef4444;
+      border-radius: 8px 8px 8px 0;
+      color: #ffffff;
+      font-size: 12px;
+      left: 50%;
+      line-height: 18px;
+      min-width: 32px;
+      position: absolute;
+      top: -18px;
+      transform: translateX(-50%);
+    }
+
+    .modal-hint {
+      align-items: center;
+      color: #7b8ba3;
+      display: flex;
+      gap: 6px;
+      margin: 0;
+    }
+
+    .modal-footer {
+      align-items: center;
+      border-top: 1px solid #edf1f5;
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+      padding: 16px 26px 18px;
+    }
+
+    .import-modal .modal-footer {
+      border-top: 0;
+      gap: 16px;
+      padding: 10px 48px 32px;
+    }
+
+    .modal-footer button {
+      min-width: 68px;
+    }
+
+    .import-modal .modal-footer button {
+      border-radius: 8px;
+      font-size: 28px;
+      height: 64px;
+      min-width: 120px;
+    }
+
+    .import-modal .modal-footer .primary {
+      background: #8fb8f7;
+      border-color: #8fb8f7;
+      min-width: 176px;
+    }
+
+    .import-modal .modal-footer .primary:disabled {
+      background: #a8c4f8;
+      border-color: #a8c4f8;
+      color: #ffffff;
+      opacity: 1;
+    }
+
+    .import-modal .modal-footer button:not(.primary) {
+      border-color: #d6dee5;
+      color: #1f2937;
+    }
+
+    .modal-footer button:not(.primary) {
+      border-color: #2563eb;
+      color: #2563eb;
+    }
+
+    .import-actions {
+      align-items: center;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .file-upload-button {
+      align-items: center;
+      border: 1px solid #2563eb;
+      border-radius: 6px;
+      color: #2563eb;
+      cursor: pointer;
+      display: inline-flex;
+      gap: 8px;
+      justify-content: center;
+      min-height: 36px;
+      padding: 0 12px;
+    }
+
+    .file-upload-button input {
+      display: none;
+    }
+
+    .import-file-name {
+      color: #556575;
+    }
+
+    .import-error {
+      background: #fff0f0;
+      border: 1px solid #ffd2d2;
+      border-radius: 6px;
+      color: #b42318;
+      padding: 10px 12px;
+    }
+
+    .import-summary span {
+      background: #edf3fb;
+      border-radius: 999px;
+      color: #46586b;
+      font-weight: 600;
+      padding: 5px 10px;
+    }
+
+    .product-submit-page {
+      color: #1f2937;
+      display: grid;
+      gap: 22px;
+      max-width: 1180px;
+      min-height: calc(100vh - 48px);
+      padding: 8px 6px 96px;
+      position: relative;
+    }
+
+    .collapse-tab {
+      background: #2563eb;
+      border-color: #2563eb;
+      border-radius: 6px;
+      color: #ffffff;
+      font-weight: 700;
+      left: -58px;
+      min-height: 80px;
+      padding: 0 10px;
+      position: absolute;
+      top: 35px;
+      width: 42px;
+      writing-mode: vertical-rl;
+    }
+
+    .product-submit-header {
+      border-bottom: 1px solid #edf1f5;
+      padding: 0 0 26px;
+    }
+
+    .product-submit-header h1 {
+      color: #1f2937;
+      font-size: 22px;
+      line-height: 1.4;
+      margin: 0;
+    }
+
+    .form-section {
+      display: grid;
+      gap: 14px;
+    }
+
+    .required-label {
+      align-items: center;
+      color: #1f2937;
+      display: flex;
+      font-size: 18px;
+      gap: 7px;
+    }
+
+    .required-label span {
+      color: #ff4d4f;
+      font-weight: 700;
+    }
+
+    .product-radio-row {
+      gap: 34px;
+      padding-left: 8px;
+    }
+
+    .product-radio-row label {
+      color: #1f2937;
+      font-size: 17px;
+      gap: 10px;
+    }
+
+    .radio-help {
+      align-items: center;
+      color: #8a9ab3;
+      display: inline-flex;
+      position: relative;
+    }
+
+    .radio-help-tooltip,
+    .id-tag-tooltip {
+      background: #4b536f;
+      border-radius: 10px;
+      bottom: calc(100% + 10px);
+      color: #ffffff;
+      display: none;
+      font-size: 15px;
+      left: 50%;
+      line-height: 1.6;
+      min-width: 220px;
+      padding: 12px 16px;
+      position: absolute;
+      transform: translateX(-50%);
+      z-index: 5;
+    }
+
+    .radio-help:hover .radio-help-tooltip,
+    .id-tag:hover .id-tag-tooltip {
+      display: block;
+    }
+
+    .plan-panel {
+      border: 1px solid #dbe4eb;
+      border-radius: 10px;
+      display: grid;
+      gap: 18px;
+      overflow: hidden;
+      padding: 20px;
+    }
+
+    .plan-title {
+      align-items: center;
+      color: #556575;
+      display: flex;
+      font-size: 18px;
+      gap: 6px;
+      justify-content: space-between;
+    }
+
+    .plan-title-main {
+      align-items: center;
+      display: inline-flex;
+      gap: 6px;
+    }
+
+    .plan-title-action {
+      border-color: #2563eb;
+      color: #2563eb;
+      min-height: 30px;
+    }
+
+    .plan-search-row {
+      align-items: center;
+      display: flex;
+      gap: 12px;
+    }
+
+    .plan-search-row input,
+    .select-trigger {
+      border-color: #d6dee5;
+      color: #9aa6b5;
+      height: 46px;
+      min-width: 220px;
+    }
+
+    .select-trigger {
+      justify-content: space-between;
+      width: 220px;
+    }
+
+    .plan-search-row input {
+      font-size: 16px;
+      width: 280px;
+    }
+
+    .search-button {
+      border-radius: 5px;
+      font-size: 16px;
+      height: 46px;
+      min-width: 104px;
+    }
+
+    .plan-table {
+      display: grid;
+      min-height: 380px;
+    }
+
+    .plan-table-head,
+    .plan-table-row {
+      display: grid;
+      grid-template-columns: 1.65fr 1.45fr 0.8fr 0.8fr 0.85fr 0.7fr;
+    }
+
+    .plan-table-head {
+      background: #f5f7fb;
+      color: #4b5563;
+      font-size: 17px;
+      font-weight: 700;
+      min-height: 70px;
+    }
+
+    .plan-table-head div,
+    .plan-table-row > div {
+      align-items: center;
+      display: flex;
+      padding: 12px 24px;
+    }
+
+    .plan-table-row {
+      border-bottom: 1px solid #edf1f5;
+      color: #4b5563;
+      font-size: 15px;
+      min-height: 96px;
+    }
+
+    .plan-table-row > div {
+      align-content: center;
+      display: grid;
+      gap: 5px;
+    }
+
+    .plan-table-row strong {
+      color: #1f2937;
+      font-size: 15px;
+      font-weight: 600;
+    }
+
+    .plan-table-row span {
+      color: #8a98a8;
+      font-size: 13px;
+    }
+
+    .goods-info-cell {
+      align-items: center;
+      display: grid;
+      gap: 12px;
+      grid-template-columns: 58px minmax(0, 1fr);
+    }
+
+    .goods-info-cell img {
+      border: 1px solid #edf1f5;
+      border-radius: 4px;
+      height: 58px;
+      object-fit: cover;
+      width: 58px;
+    }
+
+    .goods-info-cell strong,
+    .activity-info-cell strong {
+      display: block;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .activity-info-cell {
+      align-items: center;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px 10px;
+      min-width: 0;
+      position: relative;
+    }
+
+    .activity-info-cell strong {
+      flex: 1 1 130px;
+      min-width: 0;
+    }
+
+    .activity-info-cell > span {
+      flex-basis: 100%;
+    }
+
+    .id-tag {
+      background: #eef3fb;
+      border: 0;
+      border-radius: 6px;
+      color: #8494ad;
+      font-size: 13px;
+      height: 28px;
+      min-height: 28px;
+      min-width: 38px;
+      padding: 0;
+      position: relative;
+    }
+
+    .plan-empty {
+      align-content: center;
+      color: #8c9aaf;
+      display: grid;
+      gap: 16px;
+      justify-items: center;
+      min-height: 300px;
+    }
+
+    .empty-illustration {
+      align-items: center;
+      background: #f3f6fc;
+      border-radius: 26px;
+      color: #c7d3e8;
+      display: inline-flex;
+      font-size: 54px;
+      height: 136px;
+      justify-content: center;
+      width: 136px;
+    }
+
+    .batch-import-panel {
+      background: #f8fbff;
+      border: 1px solid #edf3fb;
+      border-radius: 6px;
+      display: grid;
+      gap: 12px;
+      padding: 14px 16px;
+    }
+
+    .batch-import-tip {
+      color: #556575;
+      line-height: 1.7;
+    }
+
+    .ratio-segment {
+      align-items: center;
+      background: #f1f3f6;
+      border-radius: 3px;
+      display: inline-flex;
+      height: 48px;
+      justify-self: start;
+    }
+
+    .ratio-segment[hidden],
+    .manual-custom-ratio[hidden] {
+      display: none !important;
+    }
+
+    .ratio-segment button {
+      background: transparent;
+      border: 0;
+      border-radius: 2px;
+      color: #4b5563;
+      font-size: 18px;
+      height: 40px;
+      min-height: 40px;
+      min-width: 72px;
+      padding: 0 20px;
+      position: relative;
+    }
+
+    .ratio-segment button.active {
+      background: #ffffff;
+      color: #2563eb;
+    }
+
+    .contact-input {
+      font-size: 17px;
+      height: 48px;
+      width: 100%;
+    }
+
+    .submit-actions {
+      bottom: 0;
+      display: flex;
+      gap: 18px;
+      justify-content: flex-end;
+      left: 0;
+      padding: 18px 6px 0;
+      position: sticky;
+    }
+
+    .submit-actions button {
+      border-radius: 5px;
+      font-size: 17px;
+      height: 50px;
+      min-width: 90px;
+    }
+
+    .copy-feedback {
+      color: #16a34a;
+      line-height: 36px;
+    }
+
+    .name-with-id {
+      align-items: center;
+      display: inline-flex;
+      gap: 6px;
+    }
+
+    .id-copy-button {
+      border-color: #c8d8f8;
+      border-radius: 4px;
+      color: #2563eb;
+      font-size: 12px;
+      font-weight: 700;
+      min-height: 20px;
+      min-width: 24px;
+      padding: 0 4px;
+      position: relative;
+    }
+
+    @media (max-width: 860px) {
+      .app-shell {
+        grid-template-columns: 1fr;
+      }
+
+      .content {
+        padding: 18px;
+      }
+
+      .collapse-tab {
+        display: none;
+      }
+
+      .plan-search-row,
+      .product-radio-row {
+        align-items: stretch;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .plan-table {
+        overflow-x: auto;
+      }
+
+      .plan-table-head,
+      .plan-table-body {
+        min-width: 820px;
+      }
+
+      .exclude-form-grid,
+      .auto-config-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .exclude-list-filter {
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 76px;
+      }
+
+      .exclude-list-head,
+      .goods-list-head {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      .manual-actions {
+        justify-content: flex-start;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="toast" id="toast"><span class="toast-message" id="toast-message"></span></div>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <span class="brand-mark">KS</span>
+        <strong>团长系统</strong>
+      </div>
+      <nav class="nav">
+        <section class="nav-group">
+          <div class="nav-group-title active"><span>◎</span><span>合作管理</span><span>⌄</span></div>
+          <div class="nav-subitems">
+            <button class="active" data-page-button="batch"><span>⊞</span>一键提报</button>
+            <button data-page-button="product"><span>⊡</span>指定商品提报</button>
+          </div>
+        </section>
+        <section class="nav-group">
+          <div class="nav-group-title"><span>◇</span><span>授权管理</span><span>⌄</span></div>
+          <div class="nav-subitems">
+            <button data-page-button="auth"><span>▣</span>账号授权</button>
+          </div>
+        </section>
+      </nav>
+    </aside>
+
+    <main class="content">
+      <section class="page active" id="page-batch">
+        <div class="auto-filter">
+          <strong>筛选</strong>
+          <div class="auto-filter-row">
+            <select id="account-filter" aria-label="筛选账号"></select>
+          </div>
+        </div>
+
+        <div class="auto-list-card">
+          <header class="section-title">
+            <strong>提报列表</strong>
+            <button data-open-records>查看自动提报记录</button>
+          </header>
+          <div class="auto-config-list" id="auto-config-list"></div>
+        </div>
+      </section>
+
+      <section class="page" id="page-product">
+        <div class="product-submit-page">
+          <button class="collapse-tab" type="button">收起</button>
+          <header class="product-submit-header">
+            <h1>指定商品提报-Brlab双酸面膜乳糖酸毛孔调理精华面膜保湿面膜zB</h1>
+          </header>
+
+          <div class="form-section">
+            <div class="required-label"><span>*</span>选择提报内容</div>
+            <div class="radio-row product-radio-row">
+              <label><input type="radio" name="reportType" value="goods" checked>指定商品提报</label>
+              <label><input type="radio" name="reportType" value="activity">指定活动下的全部商品提报</label>
+              <label>
+                <input type="radio" name="reportType" value="excludedGoods">不提报商品列表提报
+                <span class="radio-help">?
+                  <span class="radio-help-tooltip">可选择已配置的不提报商品列表进行单独提报</span>
+                </span>
+              </label>
+              <label><input type="radio" name="reportType" value="batchImport">批量导入商品提报</label>
+            </div>
+          </div>
+
+          <section class="plan-panel">
+            <header class="plan-title">
+              <div class="plan-title-main"><span id="source-panel-title">选择可提报计划</span><span>?</span></div>
+              <button class="plan-title-action" id="choose-all-button" hidden>全选</button>
+            </header>
+            <div class="plan-search-row" id="plan-search-row">
+              <button class="select-trigger" type="button">选择提报活动 <span>⌄</span></button>
+              <input placeholder="请输入商品ID">
+              <button class="primary search-button" type="button">查找</button>
+            </div>
+            <div class="batch-import-panel" id="batch-import-panel" hidden>
+              <div class="batch-import-tip">支持按商品ID、活动ID，或商品ID+活动ID批量查找可提报商品。只填商品ID时查找所有活动下此商品；只填活动ID时查找该活动下所有商品；同时填写时查找指定活动下指定商品。</div>
+              <div class="import-actions">
+                <button type="button" data-download-template>下载导入模板</button>
+                <label class="file-upload-button">上传 Excel<input type="file" accept=".xlsx,.xls" id="batch-file"></label>
+              </div>
+              <div class="import-file-name" id="batch-file-name"></div>
+              <div class="import-summary" id="batch-summary"></div>
+            </div>
+            <div class="plan-table" id="source-plan-table"></div>
+          </section>
+
+          <section class="plan-panel">
+            <header class="plan-title">
+              <div class="plan-title-main"><span>已选择的提报计划</span></div>
+              <button class="plan-title-action" id="remove-all-button" disabled>全部移除</button>
+            </header>
+            <div class="plan-table" id="selected-plan-table"></div>
+          </section>
+
+          <div class="form-section">
+            <div class="required-label"><span>*</span>服务费分成比例</div>
+            <div class="radio-row product-radio-row">
+              <label><input type="radio" name="productRatioMode" checked>固定分成</label>
+              <label><input type="radio" name="productRatioMode">自定义</label>
+            </div>
+            <div class="ratio-segment" id="product-ratio-segment">
+              <button data-ratio="1:9">1:9</button>
+              <button class="active" data-ratio="2:8">2:8</button>
+              <button data-ratio="3:7">3:7</button>
+              <button data-ratio="4:6">4:6</button>
+              <button data-ratio="5:5">5:5</button>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <div class="required-label"><span>*</span>联系方式</div>
+            <input class="contact-input" value="18618267721">
+          </div>
+
+          <footer class="submit-actions">
+            <button type="button">取消</button>
+            <button class="primary" type="button">确认</button>
+          </footer>
+        </div>
+      </section>
+
+      <section class="page" id="page-auth">
+        <div class="auto-list-card">
+          <header class="section-title"><strong>账号授权</strong><button>新增授权</button></header>
+          <table>
+            <thead><tr><th>团长账号</th><th>快手用户ID</th><th>授权状态</th><th>过期时间</th></tr></thead>
+            <tbody>
+              <tr><td>繁星精选</td><td>7441575342038335771</td><td>授权中</td><td>1 小时后</td></tr>
+              <tr><td>快选优品</td><td>3872059401836221440</td><td>授权中</td><td>2 小时后</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div class="drawer-mask" id="exclude-drawer">
+    <aside class="submit-drawer">
+      <header>
+        <h2>不提报商品</h2>
+        <button data-close-drawer>收起</button>
+      </header>
+      <div class="drawer-block">
+        <section class="drawer-section-card">
+          <div class="drawer-toolbar">
+            <div>
+              <strong>排除规则</strong>
+              <span>支持单条添加，也可以通过 Excel 批量导入。</span>
+            </div>
+            <button class="subtle-primary" data-open-import>导入</button>
+          </div>
+          <div class="exclude-type-group">
+            <button class="active" data-exclude-type="activityGoods">按活动+商品排除</button>
+            <button data-exclude-type="goods">按商品排除</button>
+            <button data-exclude-type="activity">按活动排除</button>
+          </div>
+          <div class="exclude-form-grid" id="exclude-form-grid"></div>
+          <div class="exclude-rule-preview"><span class="rule-tip-icon">!</span><span id="exclude-preview">填写活动ID和商品ID后，只排除该活动下的这个商品。</span></div>
+          <div class="drawer-inline-actions">
+            <button class="primary" id="add-excluded-button">添加</button>
+          </div>
+        </section>
+        <section class="drawer-section-card">
+          <div class="exclude-list-head">
+            <h3 class="exclude-section-title">已添加的不提报商品</h3>
+          </div>
+          <div class="exclude-list-filter">
+            <label>商品ID<input id="filter-goods-id" placeholder="请输入商品ID"></label>
+            <label>活动ID<input id="filter-activity-id" placeholder="请输入活动ID"></label>
+            <button id="reset-excluded-filter">重置</button>
+          </div>
+          <div class="goods-list-head">
+            <h4 class="goods-list-title">商品列表</h4>
+            <div class="manual-actions">
+              <button class="primary" id="open-manual-submit-button" disabled>一键提报</button>
+              <button class="manual-record-link" id="open-manual-records-button">查看手动提报记录</button>
+            </div>
+          </div>
+          <div class="exclude-table-wrap">
+            <table>
+              <thead><tr><th>商品ID</th><th>活动ID</th><th>添加时间</th><th>操作</th></tr></thead>
+              <tbody id="excluded-table-body"></tbody>
+            </table>
+          </div>
+          <div class="empty-state" id="excluded-empty"><span style="font-size:54px">i</span><span>暂无内容</span></div>
+          <div class="exclude-pager" id="excluded-pager"></div>
+        </section>
+      </div>
+    </aside>
+  </div>
+
+  <div class="drawer-mask" id="records-drawer">
+    <aside class="submit-drawer wide-drawer">
+      <header>
+        <div>
+          <h2>自动提报记录</h2>
+          <span class="drawer-header-desc">说明：本界面展示最近一次提报记录详情</span>
+        </div>
+        <div class="import-actions">
+          <span class="copy-feedback" id="copy-feedback"></span>
+          <button id="clear-records-button">清空演示记录</button>
+          <button data-close-records>收起</button>
+        </div>
+      </header>
+      <div class="drawer-block">
+        <table class="records-table">
+          <thead>
+            <tr><th>提报时间</th><th>活动名称</th><th>活动类型</th><th>活动状态</th><th>一级团长</th><th>最低佣金要求</th><th>提报成功</th><th>提报失败</th></tr>
+          </thead>
+          <tbody id="records-table-body"></tbody>
+        </table>
+        <div class="empty-state" id="records-empty" hidden><span style="font-size:54px">i</span><span>暂无自动提报记录</span></div>
+      </div>
+    </aside>
+  </div>
+
+  <div class="drawer-mask" id="manual-records-drawer">
+    <aside class="submit-drawer wide-drawer">
+      <header>
+        <div>
+          <h2>手动提报记录</h2>
+          <span class="drawer-header-desc">展示从不提报商品列表发起的手动提报记录，仅保留近三个月的记录</span>
+        </div>
+        <div class="import-actions">
+          <button id="clear-manual-records-button">清空演示记录</button>
+          <button data-close-manual-records>收起</button>
+        </div>
+      </header>
+      <div class="drawer-block">
+        <table class="records-table">
+          <thead>
+            <tr>
+              <th>提报时间</th>
+              <th><span class="th-help">提报总数<span class="th-help-icon">?</span><span class="th-help-tip">本次提报申请的总计划数（包含提报申请成功数和提报申请失败数）</span></span></th>
+              <th><span class="th-help">提报成功数<span class="th-help-icon">?</span><span class="th-help-tip">本次提报申请成功的总计划数</span></span></th>
+              <th><span class="th-help">提报失败数<span class="th-help-icon">?</span><span class="th-help-tip">本次提报申请失败的总计划数</span></span></th>
+              <th>提报服务费分成比例</th>
+              <th>任务状态</th>
+            </tr>
+          </thead>
+          <tbody id="manual-records-table-body"></tbody>
+        </table>
+        <div class="empty-state" id="manual-records-empty" hidden><span style="font-size:54px">i</span><span>暂无手动提报记录</span></div>
+      </div>
+    </aside>
+  </div>
+
+  <div class="modal-mask" id="settings-modal">
+    <section class="auto-settings-modal">
+      <header class="modal-header">
+        <h2>自动提报</h2>
+        <button class="icon-button" data-close-settings aria-label="关闭">×</button>
+      </header>
+      <div class="modal-body">
+        <div class="modal-tip">二级推广结束时间默认为一级推广结束时间。每天凌晨1点，系统自动对「符合活动要求的可提报商品」自动提报。您可通过自动提报记录查看提报详情。</div>
+        <div class="form-block">
+          <label class="required">二级服务费率分成</label>
+          <div class="radio-row">
+            <label><input type="radio" name="settingsRatioMode" value="fixed" checked>固定分成</label>
+            <label><input type="radio" name="settingsRatioMode" value="custom">自定义</label>
+          </div>
+          <div class="modal-ratio-row" id="settings-ratio-row">
+            <button data-ratio="50:50">50 : 50</button>
+            <button data-ratio="40:60">40 : 60</button>
+            <button data-ratio="30:70">30 : 70</button>
+            <button data-ratio="20:80">20 : 80<span>推荐</span></button>
+            <button data-ratio="10:90">10 : 90</button>
+          </div>
+          <input id="settings-custom-ratio" placeholder="请输入比例，如 20:80" hidden>
+          <p class="modal-hint"><span>i</span>平台分成比例越高，多竞品机制下曝光几率越高</p>
+        </div>
+        <div class="form-block">
+          <label class="required">联系方式</label>
+          <input id="settings-contact">
+        </div>
+      </div>
+      <footer class="modal-footer">
+        <button data-close-settings>取消</button>
+        <button class="primary" id="save-settings-button">确认</button>
+      </footer>
+    </section>
+  </div>
+
+  <div class="modal-mask" id="manual-submit-modal">
+    <section class="auto-settings-modal manual-modal">
+      <header class="modal-header">
+        <h2>手动提报</h2>
+        <button class="icon-button" data-close-manual-submit aria-label="关闭">×</button>
+      </header>
+      <div class="modal-body">
+        <div class="manual-summary" id="manual-submit-summary">将对商品列表中的 0 条不提报数据发起手动提报。</div>
+        <div class="form-section">
+          <div class="required-label"><span>*</span>服务费分成比例</div>
+          <div class="radio-row product-radio-row">
+            <label><input type="radio" name="manualRatioMode" value="fixed" checked>固定分成</label>
+            <label><input type="radio" name="manualRatioMode" value="custom">自定义</label>
+          </div>
+          <div class="ratio-segment" id="manual-ratio-segment">
+            <button data-manual-ratio="1:9">1:9</button>
+            <button class="active" data-manual-ratio="2:8">2:8</button>
+            <button data-manual-ratio="3:7">3:7</button>
+            <button data-manual-ratio="4:6">4:6</button>
+            <button data-manual-ratio="5:5">5:5</button>
+          </div>
+          <div class="manual-custom-ratio" id="manual-custom-ratio" hidden>
+            <span>团长自留</span>
+            <input id="manual-self-rate" type="number" min="0" max="100" value="20">
+            <span>%</span>
+            <span id="manual-out-rate">向外提报：80%</span>
+          </div>
+        </div>
+        <div class="form-section">
+          <div class="required-label"><span>*</span>联系方式</div>
+          <input class="contact-input" id="manual-contact" value="18618267721">
+        </div>
+      </div>
+      <footer class="modal-footer">
+        <button data-close-manual-submit>取消</button>
+        <button class="primary" id="confirm-manual-submit-button">确认</button>
+      </footer>
+    </section>
+  </div>
+
+  <div class="modal-mask" id="import-modal">
+    <section class="auto-settings-modal import-modal">
+      <header class="modal-header">
+        <h2>导入排除商品</h2>
+        <button class="icon-button" data-close-import aria-label="关闭">×</button>
+      </header>
+      <div class="modal-body">
+        <div class="modal-tip">点击 <button class="template-link" id="download-exclude-template">下载 Excel 模板</button> 后，填入期望排除商品，再上传至此，即可排除指定部分商品的提报。单次最多支持导入 3000 条商品ID</div>
+        <label class="upload-dropzone" id="exclude-upload-dropzone">
+          <input type="file" accept=".xlsx,.xls" id="exclude-file">
+          <span class="upload-icon">↥</span>
+          <span>
+            <span class="upload-title">点击或拖拽文件到此处上传</span>
+            <span class="upload-subtitle">支持 .xlsx / .xls 格式</span>
+          </span>
+        </label>
+        <div class="import-file-name" id="exclude-file-name"></div>
+        <div class="import-error" id="exclude-import-error" hidden></div>
+        <div class="import-summary" id="exclude-import-summary"></div>
+      </div>
+      <footer class="modal-footer">
+        <button data-close-import>取消</button>
+        <button class="primary" id="confirm-import-button" disabled>确认导入</button>
+      </footer>
+    </section>
+  </div>
+
+  <div class="modal-mask" id="delete-modal">
+    <section class="confirm-modal">
+      <header class="modal-header"><h2>确认删除</h2></header>
+      <div class="modal-body"><p>删除后，该商品将从不提报商品列表中移除。</p></div>
+      <footer class="modal-footer">
+        <button data-close-delete>取消</button>
+        <button class="primary" id="confirm-delete-button">删除</button>
+      </footer>
+    </section>
+  </div>
+
+  <script>
+    const accounts = [
+      { id: 1001, nickname: "繁星精选", status: "active", created_at: "2026-03-14T00:00:00.000Z" },
+      { id: 1002, nickname: "快选优品", status: "active", created_at: "2026-04-22T00:00:00.000Z" }
+    ];
+
+    let configs = [
+      { id: 1001, accountName: "繁星精选", businessName: "默认提报", ratio: "20:80", contact: "18618267721", enabled: false, monthlyEditCount: 0, monthlyEditLimit: 5, nextRunAt: "开启后每 30 分钟扫描" },
+      { id: 1002, accountName: "快选优品", businessName: "默认提报", ratio: "30:70", contact: "18750647172", enabled: true, monthlyEditCount: 2, monthlyEditLimit: 5, nextRunAt: "2026-05-08 11:00" }
+    ];
+
+    let records = [
+      { id: 1, reportTime: "2026-05-08 10:30", activityTitle: "春夏精选好物招商活动", activityId: 3465434, activityType: 1, activityStatus: 3, activityUserNickName: "快选优品", activityUserId: 65432, minInvestmentPromotionRate: 20, successGoods: 98, failedGoods: 11 }
+    ];
+
+    const mockPlanRows = [
+      { key: "mock-38174090814890969", goodsId: "38174090814890969", activityId: "3453473", goodsName: "漫花白熊抽纸24大包家用实惠装", shopName: "漫花官方旗舰店", imageUrl: "https://images.unsplash.com/photo-1583947215259-38e31be8751f?auto=format&fit=crop&w=120&q=80", activityName: "抖老板全品类招商活动", commissionRate: "5%", serviceFee: "2%", expiresAt: "2026-06-30", description: "指定商品提报", canChoose: true },
+      { key: "mock-982734568", goodsId: "982734568", activityId: "3465434", goodsName: "Brlab双酸面膜保湿修护套装", shopName: "Brlab官方旗舰店", imageUrl: "https://images.unsplash.com/photo-1556228578-8c89e6adf883?auto=format&fit=crop&w=120&q=80", activityName: "春夏精选好物招商活动", commissionRate: "8%", serviceFee: "3%", expiresAt: "2026-07-15", description: "指定活动下指定商品", canChoose: true }
+    ];
+
+    let accountFilter = "1002";
+    let currentConfigId = null;
+    let enableOnSave = false;
+    let excludedGoods = [];
+    let excludeType = "activityGoods";
+    let manualSubmitRecords = [];
+    let excludedPage = 1;
+    const EXCLUDED_PAGE_SIZE = 10;
+    let deleteTargetId = null;
+    let importPreviewRows = [];
+    const MAX_EXCLUDE_IMPORT_ROWS = 3000;
+    let reportType = "goods";
+    let batchConditions = [];
+    let selectedRows = [];
+
+    const $ = (selector) => document.querySelector(selector);
+    const $$ = (selector) => Array.from(document.querySelectorAll(selector));
+    const formatRatio = (ratio) => ratio.replace(":", " : ");
+    let toastTimer = null;
+
+    function showToast(message) {
+      $("#toast-message").textContent = message;
+      $("#toast").classList.add("show");
+      if (toastTimer) window.clearTimeout(toastTimer);
+      toastTimer = window.setTimeout(() => {
+        $("#toast").classList.remove("show");
+      }, 1800);
+    }
+
+    function renderAccountFilter() {
+      const select = $("#account-filter");
+      select.innerHTML = accounts.map((account) => `<option value="${account.id}">${account.nickname}</option>`).join("");
+      select.value = accountFilter;
+    }
+
+    function renderConfigs() {
+      const account = accounts.find((item) => String(item.id) === accountFilter);
+      const shownConfigs = configs.filter((item) => item.accountName === account.nickname);
+      $("#auto-config-list").innerHTML = shownConfigs.map((config) => `
+        <article class="auto-config-card">
+          <div class="auto-account-row">
+            <div class="account-badge">${config.accountName.slice(0, 1)}</div>
+            <strong>${config.accountName}</strong>
+            <span>当月提报设置修改次数 ${config.monthlyEditCount}/${config.monthlyEditLimit}</span>
+            <button data-open-exclude="${config.id}">◇ 排除指定商品</button>
+          </div>
+          <div class="auto-config-grid">
+            <div class="auto-col-title">对接商务</div>
+            <div class="auto-col-title">提报设置</div>
+            <div class="auto-col-title">自动提报</div>
+            <div class="auto-business">${config.businessName}</div>
+            <div class="auto-setting">
+              <p>合作比例分成 <button class="ratio-edit-button" data-open-settings="${config.id}"><strong>${formatRatio(config.ratio)}</strong> ✎</button></p>
+              <p>联系方式：${config.contact}</p>
+            </div>
+            <div class="auto-switch-cell">
+              <label class="toggle">
+                <input type="checkbox" data-toggle-config="${config.id}" ${config.enabled ? "checked" : ""}>
+                <span></span>
+              </label>
+            </div>
+          </div>
+        </article>
+      `).join("") || `<div class="empty-state"><span style="font-size:54px">i</span><span>暂无账号配置</span></div>`;
+    }
+
+    function openSettings(configId, shouldEnable) {
+      currentConfigId = configId;
+      enableOnSave = Boolean(shouldEnable);
+      const config = configs.find((item) => item.id === configId);
+      $("#settings-contact").value = config.contact;
+      $("#settings-custom-ratio").value = config.ratio;
+      $$("#settings-ratio-row button").forEach((button) => button.classList.toggle("active", button.dataset.ratio === config.ratio));
+      $("#settings-modal").classList.add("open");
+    }
+
+    function saveSettings() {
+      const config = configs.find((item) => item.id === currentConfigId);
+      const fixed = $("input[name='settingsRatioMode'][value='fixed']").checked;
+      const activeRatio = $("#settings-ratio-row button.active")?.dataset.ratio || config.ratio;
+      config.ratio = fixed ? activeRatio : $("#settings-custom-ratio").value.trim();
+      config.contact = $("#settings-contact").value.trim();
+      config.monthlyEditCount = Math.min(config.monthlyEditCount + 1, config.monthlyEditLimit);
+      if (enableOnSave) {
+        config.enabled = true;
+        config.nextRunAt = "2026-05-08 11:00";
+      }
+      $("#settings-modal").classList.remove("open");
+      renderConfigs();
+    }
+
+    function renderExcludeForm() {
+      const needsActivity = excludeType === "activity" || excludeType === "activityGoods";
+      const needsGoods = excludeType === "goods" || excludeType === "activityGoods";
+      $("#exclude-form-grid").innerHTML = `
+        ${needsActivity ? `<label><span class="required">活动ID</span><input id="exclude-activity-id" placeholder="请输入活动ID"></label>` : ""}
+        ${needsGoods ? `<label><span class="required">商品ID</span><input id="exclude-goods-id" placeholder="请输入商品ID"></label>` : ""}
+      `;
+      updateExcludePreview();
+    }
+
+    function getExcludeValues() {
+      return {
+        activityId: $("#exclude-activity-id")?.value.trim() || "",
+        goodsId: $("#exclude-goods-id")?.value.trim() || ""
+      };
+    }
+
+    function updateExcludePreview() {
+      const { activityId, goodsId } = getExcludeValues();
+      let text = "填写活动ID和商品ID后，只排除该活动下的这个商品。";
+      if (excludeType === "goods") text = goodsId ? `商品 ${goodsId} 将不会参与任何活动的自动提报。` : "填写商品ID后，该商品将在所有活动中被排除。";
+      if (excludeType === "activity") text = activityId ? `活动 ${activityId} 下的全部商品都不会自动提报。` : "填写活动ID后，该活动下的全部商品都会被排除。";
+      if (excludeType === "activityGoods" && activityId && goodsId) text = `仅活动 ${activityId} 下的商品 ${goodsId} 不参与自动提报，其他活动不受影响。`;
+      $("#exclude-preview").textContent = text;
+      const needsActivity = excludeType === "activity" || excludeType === "activityGoods";
+      const needsGoods = excludeType === "goods" || excludeType === "activityGoods";
+      if (excludeType === "activityGoods") {
+        $("#add-excluded-button").disabled = !activityId && !goodsId;
+        return;
+      }
+      $("#add-excluded-button").disabled = (needsActivity && !activityId) || (needsGoods && !goodsId);
+    }
+
+    function getFilteredExcludedRows() {
+      const goodsFilter = $("#filter-goods-id")?.value.trim() || "";
+      const activityFilter = $("#filter-activity-id")?.value.trim() || "";
+      return excludedGoods.filter((row) => {
+        const goodsMatched = !goodsFilter || row.goodsId.includes(goodsFilter);
+        const activityMatched = !activityFilter || row.activityId.includes(activityFilter);
+        return goodsMatched && activityMatched;
+      });
+    }
+
+    function renderManualSelectionState(filteredRows) {
+      $("#open-manual-submit-button").disabled = filteredRows.length === 0;
+    }
+
+    function renderExcludedPager(filteredRows) {
+      const total = filteredRows.length;
+      const totalPages = Math.max(1, Math.ceil(total / EXCLUDED_PAGE_SIZE));
+      excludedPage = Math.min(excludedPage, totalPages);
+      $("#excluded-pager").hidden = false;
+      $("#excluded-pager").innerHTML = `
+        <span>共 ${total} 条</span>
+        <button id="excluded-prev-page" ${excludedPage <= 1 ? "disabled" : ""}>上一页</button>
+        <button class="active">${excludedPage}</button>
+        <button id="excluded-next-page" ${excludedPage >= totalPages ? "disabled" : ""}>下一页</button>
+        <span>${EXCLUDED_PAGE_SIZE} 条/页</span>
+      `;
+    }
+
+    function renderExcludedRows() {
+      const filteredRows = getFilteredExcludedRows();
+      const totalPages = Math.max(1, Math.ceil(filteredRows.length / EXCLUDED_PAGE_SIZE));
+      excludedPage = Math.min(excludedPage, totalPages);
+      const pageRows = filteredRows.slice((excludedPage - 1) * EXCLUDED_PAGE_SIZE, excludedPage * EXCLUDED_PAGE_SIZE);
+      $("#excluded-empty").hidden = excludedGoods.length > 0;
+      $("#excluded-empty span:last-child").textContent = "暂无内容";
+      $("#excluded-table-body").innerHTML = pageRows.map((row) => {
+        return `
+          <tr>
+            <td>${row.goodsId || "-"}</td>
+            <td>${row.activityId || "-"}</td>
+            <td>${row.createdAt}</td>
+            <td><button class="text-delete-button" data-delete-excluded="${row.id}">删除</button></td>
+          </tr>
+        `;
+      }).join("");
+      renderManualSelectionState(filteredRows);
+      renderExcludedPager(filteredRows);
+    }
+
+    function addExcludedRow() {
+      const { activityId, goodsId } = getExcludeValues();
+      const needsActivity = excludeType === "activity" || excludeType === "activityGoods";
+      const needsGoods = excludeType === "goods" || excludeType === "activityGoods";
+      if (needsGoods && !goodsId) {
+        showToast("商品ID不能为空!");
+        return;
+      }
+      if (needsGoods && !/^\d{19}$/.test(goodsId)) {
+        showToast("商品ID输入错误!");
+        return;
+      }
+      if (needsActivity && !activityId) {
+        showToast("活动ID不能为空!");
+        return;
+      }
+      const nextActivityId = excludeType === "goods" ? "" : activityId;
+      const nextGoodsId = excludeType === "activity" ? "" : goodsId;
+      excludedGoods = [{ id: Date.now(), type: excludeType, activityId: nextActivityId, goodsId: nextGoodsId, createdAt: new Date().toLocaleString() }, ...excludedGoods];
+      renderExcludeForm();
+      renderExcludedRows();
+      renderPlanTables();
+    }
+
+    function buildMockDisplay(goodsId, activityId) {
+      const isActivityOnly = !goodsId && Boolean(activityId);
+      return {
+        goodsName: isActivityOnly ? "该活动下全部可提报商品" : goodsId === "982734568" ? "Brlab双酸面膜保湿修护套装" : "漫花白熊抽纸24大包家用实惠装",
+        shopName: isActivityOnly ? "活动商品集合" : goodsId === "982734568" ? "Brlab官方旗舰店" : "漫花官方旗舰店",
+        imageUrl: goodsId === "982734568" ? "https://images.unsplash.com/photo-1556228578-8c89e6adf883?auto=format&fit=crop&w=120&q=80" : "https://images.unsplash.com/photo-1583947215259-38e31be8751f?auto=format&fit=crop&w=120&q=80",
+        activityName: activityId ? "抖老板全品类招商活动" : "全部活动",
+        commissionRate: isActivityOnly ? "-" : "5%",
+        serviceFee: isActivityOnly ? "-" : "2%",
+        expiresAt: "2026-06-30"
+      };
+    }
+
+    function formatExcludeType(type) {
+      return { goods: "按商品排除", activity: "按活动排除", activityGoods: "按活动+商品排除" }[type];
+    }
+
+    function formatBatchCondition(row) {
+      if (row.goodsId && row.activityId) return "查找指定活动下指定商品";
+      if (row.goodsId) return "查找所有活动下此商品";
+      return "查找该活动下所有商品";
+    }
+
+    function getSourceRows() {
+      if (reportType === "excludedGoods") {
+        return excludedGoods.map((row) => ({ key: `excluded-${row.id}`, goodsId: row.goodsId, activityId: row.activityId, ...buildMockDisplay(row.goodsId, row.activityId), description: formatExcludeType(row.type), canChoose: true }));
+      }
+      if (reportType === "batchImport") {
+        return batchConditions.map((row) => ({ key: `batch-${row.id}`, goodsId: row.goodsId, activityId: row.activityId, ...buildMockDisplay(row.goodsId, row.activityId), description: formatBatchCondition(row), canChoose: Boolean(row.goodsId || row.activityId) }));
+      }
+      return mockPlanRows;
+    }
+
+    function renderPlanTable(container, rows, selectedMode) {
+      const columns = ["商品信息", "活动信息", "佣金率", "服务费", "到期时间", "操作"];
+      if (rows.length === 0) {
+        container.innerHTML = `<div class="plan-table-head">${columns.map((item) => `<div>${item}</div>`).join("")}</div><div class="plan-empty"><div class="empty-illustration">i</div><span>暂无内容</span></div>`;
+        return;
+      }
+      container.innerHTML = `
+        <div class="plan-table-head">${columns.map((item) => `<div>${item}</div>`).join("")}</div>
+        <div class="plan-table-body">
+          ${rows.map((row) => {
+            const isSelected = selectedRows.some((item) => item.key === row.key);
+            return `
+              <div class="plan-table-row">
+                <div>${row.goodsId ? `<div class="goods-info-cell"><img src="${row.imageUrl}" alt="${row.goodsName}"><div><strong>${row.goodsName}</strong><span>${row.shopName}</span></div></div>` : `<span>-</span>`}</div>
+                <div><div class="activity-info-cell"><strong>${row.activityName}</strong><button class="id-tag">ID<span class="id-tag-tooltip">活动ID： ${row.activityId || "--"}</span></button><span>${row.description}</span></div></div>
+                <div>${row.commissionRate}</div>
+                <div>${row.serviceFee}</div>
+                <div>${row.expiresAt}</div>
+                <div>${selectedMode ? `<button class="link-button" data-remove-row="${row.key}">移除</button>` : `<button class="link-button" data-choose-row="${row.key}" ${isSelected || !row.canChoose ? "disabled" : ""}>${isSelected ? "已选择" : row.canChoose ? "选择" : "需指定商品"}</button>`}</div>
+              </div>
+            `;
+          }).join("")}
+        </div>
+      `;
+    }
+
+    function renderPlanTables() {
+      const sourceRows = getSourceRows();
+      $("#source-panel-title").textContent = { goods: "选择可提报计划", activity: "选择可提报计划", excludedGoods: "不提报商品列表", batchImport: "批量导入查询条件" }[reportType];
+      $("#plan-search-row").hidden = reportType === "excludedGoods" || reportType === "batchImport";
+      $("#batch-import-panel").hidden = reportType !== "batchImport";
+      $("#choose-all-button").hidden = reportType !== "excludedGoods" && reportType !== "batchImport";
+      $("#choose-all-button").disabled = !sourceRows.some((row) => row.canChoose);
+      renderPlanTable($("#source-plan-table"), sourceRows, false);
+      renderPlanTable($("#selected-plan-table"), selectedRows, true);
+      $("#remove-all-button").disabled = selectedRows.length === 0;
+    }
+
+    function renderRecords() {
+      $("#records-empty").hidden = records.length > 0;
+      $("#records-table-body").innerHTML = records.map((row) => `
+        <tr>
+          <td>${row.reportTime}</td>
+          <td><span class="name-with-id">${row.activityTitle}<button class="id-copy-button" data-copy-id="活动:${row.activityId}">ID<span class="id-tag-tooltip">活动ID：${row.activityId}</span></button></span></td>
+          <td>${{ 1: "普通活动", 2: "专属活动", 3: "合作招商" }[row.activityType]}</td>
+          <td>${{ 1: "未发布", 2: "已发布", 3: "推广中", 4: "活动失效" }[row.activityStatus]}</td>
+          <td><span class="name-with-id">${row.activityUserNickName}<button class="id-copy-button" data-copy-id="团长:${row.activityUserId}">ID<span class="id-tag-tooltip">团长ID：${row.activityUserId}</span></button></span></td>
+          <td>${row.minInvestmentPromotionRate}%</td>
+          <td>${row.successGoods}</td>
+          <td>${row.failedGoods}</td>
+        </tr>
+      `).join("");
+    }
+
+    function renderManualRecords() {
+      $("#manual-records-empty").hidden = manualSubmitRecords.length > 0;
+      $("#manual-records-table-body").innerHTML = manualSubmitRecords.map((row) => `
+        <tr>
+          <td>${row.submitTime}</td>
+          <td>${row.targetCount}</td>
+          <td>${row.successCount}</td>
+          <td>${row.failedCount}</td>
+          <td>${row.ratio}</td>
+          <td><span class="manual-record-status">${row.status}</span></td>
+        </tr>
+      `).join("");
+    }
+
+    function openManualSubmitModal() {
+      const targetRows = getFilteredExcludedRows();
+      if (targetRows.length === 0) return;
+      $("#manual-submit-summary").textContent = `将对商品列表中的 ${targetRows.length} 条不提报数据发起手动提报。列表中的按商品、按活动、按活动+商品排除数据均支持手动提报。`;
+      $("#manual-contact").value = "18618267721";
+      $("#manual-self-rate").value = "20";
+      $$("#manual-ratio-segment button").forEach((button) => button.classList.toggle("active", button.dataset.manualRatio === "2:8"));
+      setManualRatioMode("fixed");
+      $("#confirm-manual-submit-button").disabled = false;
+      $("#manual-submit-modal").classList.add("open");
+    }
+
+    function setManualRatioMode(mode) {
+      const isCustom = mode === "custom";
+      $("input[name='manualRatioMode'][value='fixed']").checked = !isCustom;
+      $("input[name='manualRatioMode'][value='custom']").checked = isCustom;
+      $("#manual-ratio-segment").hidden = isCustom;
+      $("#manual-custom-ratio").hidden = !isCustom;
+      updateManualOutRate();
+      updateManualSubmitButton();
+    }
+
+    function getManualCustomRatio() {
+      const selfRate = Number($("#manual-self-rate").value);
+      if (!Number.isFinite(selfRate) || selfRate < 0 || selfRate > 100) return "";
+      return `${selfRate}:${100 - selfRate}`;
+    }
+
+    function updateManualOutRate() {
+      const selfRate = Number($("#manual-self-rate").value);
+      const outRate = Number.isFinite(selfRate) ? Math.max(0, Math.min(100, 100 - selfRate)) : 0;
+      $("#manual-out-rate").textContent = `向外提报：${outRate}%`;
+    }
+
+    function updateManualSubmitButton() {
+      const isCustom = $("input[name='manualRatioMode'][value='custom']").checked;
+      const ratio = isCustom ? getManualCustomRatio() : $("#manual-ratio-segment button.active")?.dataset.manualRatio;
+      const contact = $("#manual-contact").value.trim();
+      $("#confirm-manual-submit-button").disabled = !ratio || !contact || getFilteredExcludedRows().length === 0;
+    }
+
+    function confirmManualSubmit() {
+      const targetRows = getFilteredExcludedRows();
+      if (targetRows.length === 0) return;
+      const isCustom = $("input[name='manualRatioMode'][value='custom']").checked;
+      const ratio = isCustom ? getManualCustomRatio() : $("#manual-ratio-segment button.active")?.dataset.manualRatio;
+      const contact = $("#manual-contact").value.trim();
+      if (!ratio || !contact) return;
+      manualSubmitRecords = [
+        {
+          id: Date.now(),
+          submitTime: new Date().toLocaleString(),
+          targetCount: targetRows.length,
+          successCount: targetRows.length,
+          failedCount: 0,
+          ratio,
+          contact,
+          status: "已完成",
+          rows: targetRows
+        },
+        ...manualSubmitRecords
+      ];
+      $("#manual-submit-modal").classList.remove("open");
+      renderExcludedRows();
+      renderManualRecords();
+      showToast("手动提报申请已发起，您可在【手动提报记录】中查看详情");
+    }
+
+    function switchPage(page) {
+      $$(".page").forEach((item) => item.classList.remove("active"));
+      $(`#page-${page}`).classList.add("active");
+      $$("[data-page-button]").forEach((button) => button.classList.toggle("active", button.dataset.pageButton === page));
+    }
+
+    function bindEvents() {
+      $("#account-filter").addEventListener("change", (event) => {
+        accountFilter = event.target.value;
+        renderConfigs();
+      });
+
+      document.addEventListener("click", (event) => {
+        const target = event.target.closest("button, input, label");
+        if (!target) return;
+
+        if (target.matches("[data-page-button]")) switchPage(target.dataset.pageButton);
+        if (target.matches("[data-open-records]")) { renderRecords(); $("#records-drawer").classList.add("open"); }
+        if (target.matches("[data-close-records]")) $("#records-drawer").classList.remove("open");
+        if (target.matches("[data-open-exclude]")) { currentConfigId = Number(target.dataset.openExclude); $("#exclude-drawer").classList.add("open"); renderExcludeForm(); renderExcludedRows(); }
+        if (target.matches("[data-close-drawer]")) $("#exclude-drawer").classList.remove("open");
+        if (target.matches("#open-manual-submit-button")) openManualSubmitModal();
+        if (target.matches("[data-close-manual-submit]")) $("#manual-submit-modal").classList.remove("open");
+        if (target.matches("#confirm-manual-submit-button")) confirmManualSubmit();
+        if (target.matches("#open-manual-records-button")) { renderManualRecords(); $("#manual-records-drawer").classList.add("open"); }
+        if (target.matches("[data-close-manual-records]")) $("#manual-records-drawer").classList.remove("open");
+        if (target.matches("#clear-manual-records-button")) {
+          manualSubmitRecords = [];
+          renderManualRecords();
+        }
+        if (target.matches("[data-open-settings]")) openSettings(Number(target.dataset.openSettings), false);
+        if (target.matches("[data-close-settings]")) $("#settings-modal").classList.remove("open");
+        if (target.matches("#save-settings-button")) saveSettings();
+        if (target.matches("[data-open-import]")) {
+          importPreviewRows = [];
+          $("#exclude-file-name").textContent = "";
+          $("#exclude-import-summary").innerHTML = "";
+          $("#exclude-import-error").hidden = true;
+          $("#confirm-import-button").disabled = true;
+          $("#import-modal").classList.add("open");
+        }
+        if (target.matches("[data-close-import]")) $("#import-modal").classList.remove("open");
+        if (target.matches("[data-close-delete]")) $("#delete-modal").classList.remove("open");
+        if (target.matches("#add-excluded-button")) addExcludedRow();
+        if (target.matches("[data-delete-excluded]")) { deleteTargetId = Number(target.dataset.deleteExcluded); $("#delete-modal").classList.add("open"); }
+        if (target.matches("#confirm-delete-button")) {
+          excludedGoods = excludedGoods.filter((row) => row.id !== deleteTargetId);
+          $("#delete-modal").classList.remove("open");
+          renderExcludedRows();
+          renderPlanTables();
+        }
+        if (target.matches("#choose-all-button")) {
+          const existing = new Set(selectedRows.map((row) => row.key));
+          selectedRows = selectedRows.concat(getSourceRows().filter((row) => row.canChoose && !existing.has(row.key)));
+          renderPlanTables();
+        }
+        if (target.matches("[data-choose-row]")) {
+          const row = getSourceRows().find((item) => item.key === target.dataset.chooseRow);
+          if (row && !selectedRows.some((item) => item.key === row.key)) selectedRows.push(row);
+          renderPlanTables();
+        }
+        if (target.matches("[data-remove-row]")) {
+          selectedRows = selectedRows.filter((row) => row.key !== target.dataset.removeRow);
+          renderPlanTables();
+        }
+        if (target.matches("#remove-all-button")) {
+          selectedRows = [];
+          renderPlanTables();
+        }
+        if (target.matches("#clear-records-button")) {
+          records = [];
+          renderRecords();
+        }
+        if (target.matches("#reset-excluded-filter")) {
+          $("#filter-goods-id").value = "";
+          $("#filter-activity-id").value = "";
+          excludedPage = 1;
+          renderExcludedRows();
+        }
+        if (target.matches("#excluded-prev-page")) {
+          excludedPage = Math.max(1, excludedPage - 1);
+          renderExcludedRows();
+        }
+        if (target.matches("#excluded-next-page")) {
+          excludedPage += 1;
+          renderExcludedRows();
+        }
+        if (target.matches("[data-ratio]")) {
+          target.parentElement.querySelectorAll("button").forEach((button) => button.classList.remove("active"));
+          target.classList.add("active");
+        }
+        if (target.matches("[data-manual-ratio]")) {
+          target.parentElement.querySelectorAll("button").forEach((button) => button.classList.remove("active"));
+          target.classList.add("active");
+          updateManualSubmitButton();
+        }
+        if (target.matches("[data-exclude-type]")) {
+          excludeType = target.dataset.excludeType;
+          $("[data-exclude-type].active")?.classList.remove("active");
+          target.classList.add("active");
+          renderExcludeForm();
+        }
+      });
+
+      document.addEventListener("change", (event) => {
+        const target = event.target;
+        if (target.matches("[data-toggle-config]")) {
+          const config = configs.find((item) => item.id === Number(target.dataset.toggleConfig));
+          if (config.enabled) {
+            config.enabled = false;
+            config.nextRunAt = "已关闭";
+            renderConfigs();
+          } else {
+            target.checked = false;
+            openSettings(config.id, true);
+          }
+        }
+        if (target.matches("input[name='reportType']")) {
+          reportType = target.value;
+          renderPlanTables();
+        }
+        if (target.matches("input[name='settingsRatioMode']")) {
+          const custom = target.value === "custom";
+          $("#settings-ratio-row").hidden = custom;
+          $("#settings-custom-ratio").hidden = !custom;
+        }
+        if (target.matches("input[name='manualRatioMode']")) {
+          setManualRatioMode(target.value);
+        }
+        if (target.matches("#batch-file")) {
+          const file = target.files[0];
+          if (file) {
+            $("#batch-file-name").textContent = `当前文件：${file.name}`;
+            batchConditions = [
+              { id: Date.now(), goodsId: "982734568", activityId: "3465434" },
+              { id: Date.now() + 1, goodsId: "", activityId: "3453473" }
+            ];
+            $("#batch-summary").innerHTML = "<span>共解析 2 条查询条件</span>";
+            renderPlanTables();
+          }
+          target.value = "";
+        }
+        if (target.matches("#exclude-file")) {
+          const file = target.files[0];
+          if (file) {
+            $("#exclude-file-name").textContent = `当前文件：${file.name}`;
+            importPreviewRows = [{ goodsId: "982734567" }, { goodsId: "982734568" }];
+            if (importPreviewRows.length > MAX_EXCLUDE_IMPORT_ROWS) {
+              $("#exclude-import-error").hidden = false;
+              $("#exclude-import-error").textContent = `单次最多支持导入 ${MAX_EXCLUDE_IMPORT_ROWS} 条商品ID，请拆分后再上传。`;
+              $("#exclude-import-summary").innerHTML = "";
+              $("#confirm-import-button").disabled = true;
+            } else {
+              $("#exclude-import-error").hidden = true;
+              $("#exclude-import-summary").innerHTML = "<span>共 2 行</span>";
+              $("#confirm-import-button").disabled = false;
+            }
+          }
+          target.value = "";
+        }
+      });
+
+      document.addEventListener("input", (event) => {
+        if (event.target.matches("#exclude-activity-id, #exclude-goods-id")) updateExcludePreview();
+        if (event.target.matches("#filter-goods-id, #filter-activity-id")) {
+          excludedPage = 1;
+          renderExcludedRows();
+        }
+        if (event.target.matches("#manual-self-rate")) {
+          updateManualOutRate();
+          updateManualSubmitButton();
+        }
+        if (event.target.matches("#manual-contact")) updateManualSubmitButton();
+      });
+
+      $("#exclude-upload-dropzone").addEventListener("dragover", (event) => {
+        event.preventDefault();
+      });
+
+      $("#exclude-upload-dropzone").addEventListener("drop", (event) => {
+        event.preventDefault();
+        const file = event.dataTransfer.files[0];
+        if (!file) return;
+        $("#exclude-file-name").textContent = `当前文件：${file.name}`;
+        importPreviewRows = [{ goodsId: "982734567" }, { goodsId: "982734568" }];
+        $("#exclude-import-error").hidden = true;
+        $("#exclude-import-summary").innerHTML = "<span>共 2 行</span>";
+        $("#confirm-import-button").disabled = false;
+      });
+
+      $("#confirm-import-button").addEventListener("click", () => {
+        excludedGoods = importPreviewRows.map((row, index) => ({ id: Date.now() + index, type: "goods", activityId: "", goodsId: row.goodsId, createdAt: new Date().toLocaleString() })).concat(excludedGoods);
+        $("#import-modal").classList.remove("open");
+        renderExcludedRows();
+        renderPlanTables();
+      });
+
+      $("#download-exclude-template").addEventListener("click", () => {
+        const blob = new Blob(["商品ID\n982734567\n982734568\n"], { type: "text/csv;charset=utf-8" });
+        downloadBlob(blob, "排除指定商品导入模板.csv");
+      });
+
+      $("[data-download-template]").addEventListener("click", () => {
+        const blob = new Blob(["商品ID,活动ID\n982734567,\n,3465434\n982734568,3465434\n"], { type: "text/csv;charset=utf-8" });
+        downloadBlob(blob, "批量导入商品提报模板.csv");
+      });
+    }
+
+    function downloadBlob(blob, fileName) {
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = fileName;
+      link.click();
+      URL.revokeObjectURL(url);
+    }
+
+    renderAccountFilter();
+    renderConfigs();
+    renderExcludeForm();
+    renderPlanTables();
+    bindEvents();
+  </script>
+</body>
+</html>
